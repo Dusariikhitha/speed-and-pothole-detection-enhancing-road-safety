@@ -1,1 +1,3 @@
-# speed-and-pothole-detection-enhancing-road-safety
+# SPEED AND POTHOLE DETECTION ENHANCING ROAD SAFETY
+
+**The Road Safety Enhancement System detects speed anomalies and potholes using IoT-enabled sensors like Ultrasonic, IR, and Arduino. It aims to improve road safety by providing real-time alerts to drivers about hazards, reducing accidents and vehicle damage. Speed violations are identified by comparing real-time vehicle speed with regulated limits, while potholes are detected through road surface vibration changes. Data is transmitted to central servers for analysis, generating alerts for drivers and authorities. This system enhances safety for all road users, improves road maintenance, and optimizes traffic management, ultimately reducing road-related injuries and fatalities.**
