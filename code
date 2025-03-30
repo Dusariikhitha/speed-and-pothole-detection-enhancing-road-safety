@@ -1,0 +1,98 @@
+#define echoPin 2
+#define trigPin 3
+#define sensor1 A0
+#define sensor2 A1
+#define buzzer 13
+
+long duration;
+int distance;
+unsigned long timer1, timer2;
+float Time = 0, Distance = 5.0, speed = 0;
+int pole1 = 0, pole2 = 0;
+
+void setup() {
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(sensor1, INPUT);
+  pinMode(sensor2, INPUT);
+  pinMode(buzzer, OUTPUT);
+
+  Serial.begin(9600);
+  Serial.println("Ultrasonic Sensor HC-SR04 Test");
+  Serial.println("with Arduino UNO R3");
+
+  // Test buzzer
+  digitalWrite(buzzer, HIGH);
+  delay(500);
+  digitalWrite(buzzer, LOW);
+
+  // Test sensors
+  Serial.print("Sensor1 status: ");
+  Serial.println(digitalRead(sensor1));
+  Serial.print("Sensor2 status: ");
+  Serial.println(digitalRead(sensor2));
+}
+
+void loop() {
+  // Ultrasonic sensor
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  duration = pulseIn(echoPin, HIGH);
+  distance = duration * 0.034 / 2;
+
+  Serial.print("Distance of the pothole: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  if (distance > 50) {
+    Serial.println("Incoming pothole");
+  } else {
+    Serial.println("No pothole incoming");
+  }
+
+  // IR sensor logic
+  if (digitalRead(sensor1) == LOW && pole1 == 0) {
+    timer1 = millis();
+    pole1 = 1;
+  }
+  if (digitalRead(sensor2) == LOW && pole2 == 0) {
+    timer2 = millis();
+    pole2 = 1;
+  }
+
+  // Speed calculation
+  if (pole1 == 1 && pole2 == 1) {
+    Time = abs(timer1 - timer2) / 1000.0;
+    speed = (Distance / Time) * 3.6;
+
+    Serial.print("Speed: ");
+    Serial.print(speed, 1);
+    Serial.println(" Km/Hr");
+
+    if (speed > 50) {
+      Serial.println("Over Speeding");
+      digitalWrite(buzzer, HIGH);
+    } else {
+      Serial.println("Normal Speed");
+    }
+
+    // Reset
+    delay(3000);
+    digitalWrite(buzzer, LOW);
+    speed = 0;
+    pole1 = 0;
+    pole2 = 0;
+  }
+
+  // Vehicle detection
+  if (pole1 == 0 && pole2 == 0) {
+    Serial.println("No vehicle detected");
+  } else if (pole1 == 1 || pole2 == 1) {
+    Serial.println("Searching for vehicle...");
+  }
+
+  delay(100); // Add delay to reduce loop frequency
+}
